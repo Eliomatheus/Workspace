@@ -286,17 +286,19 @@ Static Function PIFINA5()
 					SZ5->(MsUnlock())
 				EndIf
 			Else
-				RecLock("SZ5", .T.) // RecLock de Inclusão
-				SZ5->Z5_CODDES 	:= M->Z4_CODDES
-				SZ5->Z5_ITEM  	:=	aCols[nLinha][nPosItem]
-				SZ5->Z5_DESCRI 	:=	aCols[nLinha][nPosDesc]
-				SZ5->Z5_DATAD 	:=	aCols[nLinha][nPosDt]
-				SZ5->Z5_PRECO 	:= 	aCols[nLinha][nPosPreco]
-				SZ5->Z5_QUANT 	:=	aCols[nLinha][nPosQtd]
-				SZ5->Z5_VALOR 	:= 	aCols[nLinha][nPosTotal]
-				SZ5->Z5_TIPO 		:= 	aCols[nLinha][nPosTpDesc]
-				SZ5->Z5_OBS 		:= 	aCols[nLinha][nPosObs]
-				SZ5->(MsUnlock())
+				IF !aCols[nLinha][9]
+					RecLock("SZ5", .T.) // RecLock de Inclusão
+					SZ5->Z5_CODDES 	:= M->Z4_CODDES
+					SZ5->Z5_ITEM  	:=	aCols[nLinha][nPosItem]
+					SZ5->Z5_DESCRI 	:=	aCols[nLinha][nPosDesc]
+					SZ5->Z5_DATAD 	:=	aCols[nLinha][nPosDt]
+					SZ5->Z5_PRECO 	:= 	aCols[nLinha][nPosPreco]
+					SZ5->Z5_QUANT 	:=	aCols[nLinha][nPosQtd]
+					SZ5->Z5_VALOR 	:= 	aCols[nLinha][nPosTotal]
+					SZ5->Z5_TIPO 		:= 	aCols[nLinha][nPosTpDesc]
+					SZ5->Z5_OBS 		:= 	aCols[nLinha][nPosObs]
+					SZ5->(MsUnlock())
+				EndIf
 			EndIf
 		Next nLinha
 	Else // se nao for Inclusão ou Alteração vai Executar a linha abaixo
