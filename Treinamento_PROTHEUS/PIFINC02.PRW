@@ -1,14 +1,12 @@
 #INCLUDE "TOTVS.CH"
-
 /*/{Protheus.doc} PIFINC02
-FUNÇÃO PARA CRIAR TELA DE CONTA CORRENTE
-@type function
-@author INI ELIO MATHEUS
-@since 13/03/2026
+Exibe browse de contas correntes utilizando FWMBrowse com menu de opções
+personalizado para visualizar, incluir, alterar e excluir registros da tabela SZ1.
+@type 		function
+@version  2410
+@author 	Ponto INI - ELIO MATHEUS
+@since 		13/03/2026
 /*/
-
-
-// Função para a Criação da Tela de Conta Corrente 
 User Function PIFINC02()
 
 	Local oBrowse
@@ -20,8 +18,14 @@ User Function PIFINC02()
 	oBrowse:Activate()
 
 Return
-
-
+/*/{Protheus.doc} MenuDef
+Define menu de opções da rotina PIFINC02 com ações de pesquisar, visualizar,
+incluir, alterar e excluir contas correntes.
+@type 		function
+@version  2410
+@author 	Ponto INI - ELIO MATHEUS
+@since 		13/03/2026
+/*/
 Static Function MenuDef()
 
 	Local aRotina := {}
@@ -33,18 +37,30 @@ Static Function MenuDef()
 	aAdd(aRotina, {'Excluir'    , 'U_PIFINE03',0  ,5})
 
 return aRotina
-
-// Funçao para Validar Criação de Correntista 
+/*/{Protheus.doc} PIBLQC01
+Efetua inclusão de conta corrente chamando AxInclui com validação PIVALCN.
+Após inclusão bem-sucedida, retorna .T.
+@type 		function
+@version  2410
+@author 	Ponto INI - ELIO MATHEUS
+@since 		13/03/2026
+/*/
 User Function PIBLQC01()
 	Local lRet  := .F.
 	nOpcao := AxInclui("SZ1", 0, 3,,,, "U_PIVALCN()",, , , , , ,) // Antes de fazer a Inclusão vai passar pela validação do PIVALCN
 
 	If nOpcao == 1
-
 		lRet := .T.
 	EndIf
 Return lRet
-
+/*/{Protheus.doc} PIVALCN
+Valida se banco, agência, conta e dígito já estão vinculados a outro correntista
+na tabela SZ1. Se já existirem, bloqueia a inclusão e exibe erro.
+@type 		function
+@version  2410
+@author 	Ponto INI - ELIO MATHEUS
+@since 		13/03/2026
+/*/
 User function PIVALCN()
 	Local cBanco :=  M->Z1_BANCO
 	Local cAgencia := M->Z1_AGENCIA
@@ -59,10 +75,15 @@ User function PIVALCN()
 	Else
 		lRet := .T.
 	EndIf
-
 Return lRet
-
-// Função Para fazer Alteração 
+/*/{Protheus.doc} PIFINA01
+Efetua alteração de conta corrente verificando se existe movimentação vinculada
+na tabela SZ2. Se não houver movimento, permite alteração via AxAltera.
+@type 		function
+@version  2410
+@author 	Ponto INI - ELIO MATHEUS
+@since 		20/04/2026
+/*/
 User Function PIFINA01()
 	Local nAltera := 0
 
@@ -77,10 +98,15 @@ User Function PIFINA01()
 			FWAlertError("Operação Cancelada", "Atenção")
 		EndIF
 	EndIf
-
 Return nAltera
-
-//Função para Excluir Registro 
+/*/{Protheus.doc} PIFINE03
+Efetua exclusão de conta corrente verificando se existe movimentação vinculada
+na tabela SZ2. Se não houver movimento, permite exclusão via AxDeleta.
+@type 		function
+@version  2410
+@author 	Ponto INI - ELIO MATHEUS
+@since 		20/04/2026
+/*/
 User Function PIFINE03()
 	Local nDeleta := 0
 

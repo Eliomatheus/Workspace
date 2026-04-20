@@ -1,15 +1,15 @@
-// Bibliotecas 
 #INCLUDE "TOTVS.CH"
 #INCLUDE "FWMVCDEF.ch"
 
 /*/{Protheus.doc} PIFINC03
-Rotina de tela da Tabela SZ2 com validações de movimentações
-@type function
-@author Elio Matheus 
-@since 24/03/2026
+Exibe browse de movimentações bancárias utilizando FWMBrowse com menu de opções
+personalizado para pesquisar, visualizar, incluir movimentos, estornar valores
+e emitir comprovantes da tabela SZ2.
+@type 		function
+@version  2410
+@author 	Ponto INI - Elio Matheus 
+@since 		24/03/2026
 /*/
-
-
 User Function PIFINC03() // Função para a Criação da Tela Movimentos
 
 	Local oBrowse
@@ -19,10 +19,15 @@ User Function PIFINC03() // Função para a Criação da Tela Movimentos
 	oBrowse:SetAlias("SZ2")
 	oBrowse:SetDescription('Movimentação Bancaria')
 	oBrowse:Activate()
-
 Return
-
-
+/*/{Protheus.doc} MenuDef
+Define menu de opções da rotina PIFINC03 com ações de pesquisar, visualizar,
+incluir movimento, estornar valor e emitir comprovante.
+@type 		function
+@version  2410
+@author 	Ponto INI - Elio Matheus 
+@since 		24/03/2026
+/*/
 Static Function MenuDef()
 
 	Local aRotin := {} // Variavel decalrada para passar as opções do Outras Ações, Variavel vai receber as Arreys
@@ -36,37 +41,34 @@ Static Function MenuDef()
 	aAdd(aRotin,{'Comprovante', 'U_PIREL01',0  ,7}) // Comprovante com uma Função Criada -> essa função esta em outro fonte
 
 return aRotin
-
-// Função para fazer Inclusão de Movimentos
+/*/{Protheus.doc} PIFINM01
+Efetua inclusão de movimentação bancária ou estorno de transação. Na inclusão,
+atualiza o saldo da conta (SZ1) conforme tipo de movimento (D/C). No estorno,
+verifica saldo disponível e remove a movimentação.
+@type 		function
+@version  2410
+@author 	Ponto INI - Elio Matheus 
+@since 		24/03/2026
+/*/
 User Function PIFINM01(cAlias,nRec,nOpc)
 	Local nOpcao := 0
 	Local lRet := .T.
 	If nOpc == 3 // Validação para entender se è Inclusão
-
 		nOpcao := AxInclui("SZ2", 0, 3,,,, "U_PIVALI(3)",, , , , , ,) // Chamando a Função AxInclui para fazer Inclusao Antes de ir para o IF ele vai para a Validação PIVALI
-
 		If nOpcao == 1
-
 			If SZ2->Z2_MOVIMEN == "D"
-
 				SZ1->(RecLock('SZ1', .F.))
 				SZ1->Z1_SALDO := SZ1->Z1_SALDO - SZ2->Z2_VALOR
 				SZ1->(MsUnlock())
-
 			Else
-
 				SZ1->(RecLock('SZ1', .F.))
 				SZ1->Z1_SALDO := SZ1->Z1_SALDO + SZ2->Z2_VALOR
 				SZ1->(MsUnlock())
-
 			EndIf
-
 		EndIf // Final do IF de Inclusão
 	Else // Para validar o Estorno
 		SZ1->(DbSetOrder(5))
 		If SZ1->(DbSeek(xFilial("SZ1")+SZ2->Z2_CORRENT+ SZ2->Z2_BANCO+SZ2->Z2_AGENCIA+SZ2->Z2_CONTA+SZ2->Z2_DGCNTA)) // Verifica se o que esta salvo no banco existe na SZ1
-
-
 			If MsgYesNo("Tem certeza que deseja estornar essa transação")
 				If SZ2->Z2_MOVIMEN == "C"
 					If !(SZ1->Z1_SALDO > SZ2->Z2_VALOR)
@@ -81,9 +83,7 @@ User Function PIFINM01(cAlias,nRec,nOpc)
 						SZ2->(DbDelete()) // Para deletar a Movimentação feita na SZ2
 						SZ2->(MsUnlock())
 						FWAlertSuccess("Estorno Concluido com Sucesso", "Operação Concluida")
-
 					EndIf
-
 				Else
 					// RecLock do Movimento de Debito
 					SZ1->(RecLock('SZ1', .F.))
@@ -93,16 +93,20 @@ User Function PIFINM01(cAlias,nRec,nOpc)
 					SZ2->(RecLock('SZ2', .F.))
 					SZ2->(DbDelete())
 					SZ2->(MsUnlock())
-
-
 				EndIf
 			EndIf
 		EndIf
-
 	EndIf
 Return lRet
-
-//Validação de Inclusão de movimentos
+/*/{Protheus.doc} PIVALI
+Valida inclusão de movimentação verificando se a conta bancária existe na SZ1
+e se há saldo suficiente para movimentos de débito. Bloqueia se saldo for
+insuficiente ou se a conta for inválida.
+@type 		function
+@version  2410
+@author 	Ponto INI - Elio Matheus 
+@since 		24/03/2026
+/*/
 User Function PIVALI(nEscolha)
 	Local lRet := .T. // Variavel para poder deixar fazer a inclusão de Movimentos
 	Default nEscolha := 0

@@ -2,16 +2,15 @@
 #INCLUDE 'TOTVS.CH'
 
 //--------------------------------------------------------------------------------
-/*/{Protheus.doc} DEN05R32()
-Funcao para relatorio de vendas com distinção de tabela Fixa ou Mista
-
+/*/{Protheus.doc} PIREL02
+Exibe tela de parâmetros e gera relatório de correntistas utilizando TReport.
+Apresenta dados de correntista, banco, agência, conta e saldo da tabela SZ1.
 @author    .iNi Sistemas - Joao Tonini
 @since     26/09/2024
 @version   P.12
 @param     Nenhum
 @return    Nenhum
 @obs       Nenhum
-
 Alteracoes Realizadas desde a Estruturacao Inicial
 Data       Programador     Motivo
 /*/
@@ -30,22 +29,14 @@ User Function PIREL02()
 	EndIf
 
 Return(Nil)
-
-//--------------------------------------------------------------------------------
-/*/{Protheus.doc} FReportDef(cAliasQry)
-Funcao para gerar o relatorio 
-
-@author    .iNi Sistemas - Joao Tonini
-@since     26/09/2024
-@version   P.12
-@param     Nenhum
-@return    Nenhum
-@obs       Nenhum
-
-Alteracoes Realizadas desde a Estruturacao Inicial
-Data       Programador     Motivo
+/*/{Protheus.doc} FReportDef
+Define a estrutura do relatório de correntistas com TReport e TRSection.
+Configura células para exibir correntista, banco, agência, conta, dígito e saldo.
+@type function
+@version 2410
+@author Ponto INI - Elio Matheus
+@since 20/04/2026
 /*/
-//--------------------------------------------------------------------------------
 Static Function FReportDef(cAliasQry)
 
 	Local cTitulo := "Correntista"
@@ -68,22 +59,14 @@ Static Function FReportDef(cAliasQry)
 //	TRCell():New(oSection, "COMISS"                         ,cAliasQry,"COMISS"         ,PesqPict('SC5','C5_COMIS1')    ,   TamSx3("C5_COMIS1")[1])
 
 Return(Nil)
-
-//--------------------------------------------------------------------------------
-/*/{Protheus.doc} FPrintReport(cAliasQry)
-Funcao para chamar a query para popular os dados
-
-@author    .iNi Sistemas - Joao Tonini
-@since     26/09/2024
-@version   P.12
-@param     Nenhum
-@return    Nenhum
-@obs       Nenhum
-
-Alteracoes Realizadas desde a Estruturacao Inicial
-Data       Programador     Motivo
+/*/{Protheus.doc} FPrintReport
+Executa query SQL na tabela SZ1 e popula o relatório com dados de correntistas.
+Percorre os registros e imprime cada linha na seção do relatório.
+@type 		function
+@version  2410
+@author 	Ponto INI - Elio Matheus
+@since 20/04/2026
 /*/
-//--------------------------------------------------------------------------------
 Static Function FPrintReport(cAliasQry)
 
 	Local cQuery:= ''
@@ -112,16 +95,11 @@ Static Function FPrintReport(cAliasQry)
 			oSection:PrintLine()
 			oSection:lHeaderSection := !lXlsPrnt
 			oReport:IncMeter()
-
 			(cAliasQry)->(DBSkip())
 		EndDo
-
 		oSection:Finish()
-
 	Else
 		ApMsgAlert("Não existem dados para imprimir com os parâmetros informados!")
 	EndIf
 	(cAliasQry)->(DBCloseArea())
-
-
 Return(Nil)

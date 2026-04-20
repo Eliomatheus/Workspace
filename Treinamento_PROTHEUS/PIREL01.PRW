@@ -1,7 +1,15 @@
 #Include "Protheus.ch"
 #INCLUDE 'TOTVS.CH'
 
-//Função para a criação do Relatorio 
+/*/{Protheus.doc} PIFINM01
+Gera comprovante de transação bancária em formato PDF utilizando FWMsPrinter.
+Imprime dados do correntista, informações da conta, valor da movimentação,
+status e histórico com quebra de linha automática.
+@type 		function
+@version  2410
+@author 	Ponto INI - Elio Matheus 
+@since 		24/03/2026
+/*/
 User Function PIREL01()
 	Local nValor := SZ2->Z2_VALOR
 	Local cHisto := SUBSTR( SZ2->Z2_HIST, 1 , 2550 ) // Função para falar o inicio de caracteres e o FIM
@@ -66,17 +74,22 @@ User Function PIREL01()
 	oPrinter:Say( 450,190,"Histórico de movimento: ",oFont2,, )
 	//Função para fazer quebra de linha
 	For nx := 1 To nTamanho // For para pecorrer meu Nx que começa em 1 e termina no nTamanho
-
 		cMemo := Memoline(Alltrim((cHisto)),70,nx,,.T.) // o cMemo recebe a variavel Momoline e utilizo o Alltrim para remover espaço em branco da Direita
 		oPrinter:Say(nLinha,12,cMemo,oFont2) // Impreção do meu memo o 12 é o " Espaço da linha lateral"
-		nLinha += 10 // Para cada quebra de linha vai aumentar mias 10 no meu nLinha
-
+		nLinha += 10 //
 	Next nx // Volta para o FOR
 
 	Oprinter:EndPage() // Terminando a Impressão
 	Oprinter:Print() //Imprimindo
 
 Return
-// Função para fazer a Conversao do Valor
+/*/{Protheus.doc} MoedaBR
+Converte valor numérico para formato de moeda brasileira (R$).
+Aplica máscara de formatação com separadores de milhar e decimal.
+@type function
+@version  2410
+@author 	Ponto INI - Elio Matheus 
+@since 		24/03/2026
+/*/
 Static Function MoedaBR(nValor) // Declarando a Função e chamando a variavel
 Return ("R$ " + (Transform(nValor,"@E 999,999,999.99"))) // Fazendo a transformação e inserindo a mascara.

@@ -224,18 +224,18 @@ Static Function PIFINA5()
 	SZ4->(DbSetOrder(1))
 	SZ5->(DbSetOrder(1))
 	If INCLUI
+		RecLock("SZ4", .T.)
+		SZ4->Z4_CODDES 		:=  M->Z4_CODDES
+		SZ4->Z4_CPFBEN 		:=  M->Z4_CPFBEN
+		SZ4->Z4_NOMBEN 		:=  M->Z4_NOMBEN
+		SZ4->Z4_CODCORR 	:=  M->Z4_CODCORR
+		SZ4->Z4_NOMCORR 	:=  M->Z4_NOMCORR
+		SZ4->Z4_DATA 			:=  M->Z4_DATA
+		SZ4->Z4_STATUS 		:=  M->Z4_STATUS
+		SZ4->(MsUnlock())
 		If lRet
 			For nLinha := 1 to Len(aCols) // Pecorre o acols
 				If !aCols[nLinha][9] //se a possição [9] for .F. vai executar o RecLock Abaixo
-					RecLock("SZ4", .T.)
-					SZ4->Z4_CODDES 		:=  M->Z4_CODDES
-					SZ4->Z4_CPFBEN 		:=  M->Z4_CPFBEN
-					SZ4->Z4_NOMBEN 		:=  M->Z4_NOMBEN
-					SZ4->Z4_CODCORR 	:=  M->Z4_CODCORR
-					SZ4->Z4_NOMCORR 	:=  M->Z4_NOMCORR
-					SZ4->Z4_DATA 			:=  M->Z4_DATA
-					SZ4->Z4_STATUS 		:=  M->Z4_STATUS
-					SZ4->(MsUnlock())
 
 
 					RecLock("SZ5", .T.)
@@ -359,7 +359,6 @@ User Function PIFINL01()
 			EndIf
 		EndIf
 	EndIf
-
 	If !SZ3->(DbSeek(xFilial("SZ3")+ M->Z4_CODCORR + M->Z4_CPFBEN))
 		lRet := .F.
 		FWAlertError("Beneficiario não vinculado ao correntista, favor verificar", "Atenção")
@@ -383,7 +382,6 @@ User Function PIVCPT()
 	Local nMesAtual    	:= Month(dAtual)
 	Local nAnoAtual    	:= Year(dAtual)
 
-
 	SZ4->(DbSetOrder(2))
 	If !Empty(M->Z4_DATA) .And. Len(M->Z4_DATA) >= 7
 		nMesComp := Val(SubStr(M->Z4_DATA, 1, 2))
@@ -404,7 +402,6 @@ User Function PIVCPT()
 				"Favor verificar", "Atenção")
 		EndIf
 	EndIf
-
 Return lRet
 //--------------------------------------------------------------------------------
 /*/{Protheus.doc} PIFINT01
@@ -428,19 +425,7 @@ User Function PIFINT01()
 
 	nQtd := aCols[n][nPosQtd]
 	nPreco := aCols[n][nPosPreco]
-/*
-	If nColPos == nPosPreco
-		nPreco := &(ReadVar())
-	Else
-		nPreco := aCols[n][nPosPreco]
-	EndIf
 
-	If nColPos == nPosQtd
-		nQtd := &(ReadVar())
-	Else
-		nQtd := aCols[n][nPosQtd]
-	EndIf
-*/
 	If nColPos == nPosQtd
 		nQtd := &(ReadVar())
 	ElseIf nColPos == nPosPreco

@@ -1,7 +1,14 @@
-// Bibliotecas 
 #INCLUDE "TOTVS.CH"
 #INCLUDE "FWMVCDEF.ch"
 
+/*/{Protheus.doc} PIFINC04
+Exibe browse de beneficiários utilizando FWMBrowse com menu de opções
+personalizado para visualizar, incluir, alterar e excluir registros da tabela SZ3.
+@type function
+@version  2410
+@author 	Ponto INI - Elio Matheus 
+@since 		10/04/2026
+/*/ 
 User Function PIFINC04() // Função para a Criação da Tela Benificiario
 
 	Local oBrowse
@@ -13,9 +20,15 @@ User Function PIFINC04() // Função para a Criação da Tela Benificiario
 	oBrowse:Activate()
 
 Return
-
+/*/{Protheus.doc} MenuDef
+Define menu de opções da rotina PIFINC04 com ações de pesquisar, visualizar,
+incluir, alterar e excluir beneficiários.
+@type 		function
+@version  2410
+@author 	Ponto INI - Elio Matheus
+@since 		10/04/2026
+/*/
 Static Function MenuDef()
-
 	Local aRotin := {} // Variavel decalrada para passar as opções do Outras Ações, Variavel vai receber as Arreys
 
 	aAdd(aRotin, {'Pesquisar'  , 'AxPesqui'  ,0  ,1})
@@ -23,19 +36,14 @@ Static Function MenuDef()
 	aAdd(aRotin, {'Incluir'    , 'U_PIFINC4B',0  ,3})
 	aAdd(aRotin, {'Alterar'    , 'U_PIFINC4B',0  ,4})
 	aAdd(aRotin, {'Excluir'    , 'U_PIFINC4B',0  ,5})
-
-
 return aRotin
 /*/{Protheus.doc} PIFINC4B
-Função que faz a criação da tela e suas funcionalidades.
-@type function
+Função de manutenção de beneficiários utilizando Modelo 2 (MsMGet + MsNewGetDados).
+Permite visualização, inclusão, alteração e exclusão com validação de linha PIVLIN.
+@type 		function
 @version  12
-@author Ponto Ini Elio Matheus
-@since 10/04/2026
-@param cAlias, character, param_description
-@param nReg, numeric, param_description
-@param nOpc, numeric, param_description
-@return variant, return_description
+@author 	Ponto Ini Elio Matheus
+@since 		10/04/2026
 /*/
 User Function PIFINC4B(cAlias,nReg,nOpc)
 
@@ -180,11 +188,12 @@ Return(Nil)
 
 
 /*/{Protheus.doc} PIFIAD1
-Validação para poder fazer Inclusão, alteração e exclusão de registros
-@type  function
+Efetua gravação de beneficiários gerenciando inclusão, alteração e exclusão
+de registros na tabela SZ3 conforme operação selecionada.
+@type  		function
 @version  12.0
-@author Ponto ini Elio Matheus
-@since 10/04/2026
+@author 	Ponto ini Elio Matheus
+@since 		10/04/2026
 /*/
 Static Function PIFIAD1()
 // aScan para saber a possição de cada campo solicitado
@@ -273,11 +282,12 @@ Static Function PIFIAD1()
 Return
 
 /*/{Protheus.doc} PIVLIN
-Validação para verificar se a linha esta correta e poder alterar para proxima ou salvar
-@type  function 
-@version 12.0
-@author Ponto Ini Elio Matheus
-@since 10/04/2026
+Valida linha do grid verificando campos obrigatórios, CPF válido e impedindo
+CPF duplicado entre beneficiários e com o correntista.
+@type  		function 
+@version 	2410
+@author 	Ponto Ini Elio Matheus
+@since 		10/04/2026
 /*/
 User Function PIVLIN()
 	Local lRet := .T.
@@ -316,5 +326,4 @@ User Function PIVLIN()
 			EndIf
 		Next nX
 	EndIf
-
 Return lRet
