@@ -14,40 +14,38 @@ User Function PIFINC05()
 	private ccadastro := 'Cabeçalho de Movimentações'
 	oBrowse := FWMBrowse():New()
 	oBrowse:SetAlias("SZ4")
-	oBrowse:SetDescription('Cabeçalho de Movimentações de Beneficiarios')
+	oBrowse:SetDescription('Movimentações de Beneficiarios')
 	oBrowse:AddLegend( "SZ4->Z4_STATUS == 'P'", "YELLOW",   "Pendente" )
 	oBrowse:AddLegend( "SZ4->Z4_STATUS == 'A'", "GREEN",    "Aprovado" )
 	oBrowse:AddLegend( "SZ4->Z4_STATUS == 'R'", "RED"  ,     "Reprovado" )
 	oBrowse:Activate()
 Return
-//--------------------------------------------------------------------------------
 /*/{Protheus.doc} MenuDef
 Define menu de opcoes da rotina PIFINC05
 @type       function
-@author INI Elio Matheus
+@author 		Ponto INI - Elio Matheus
 @since      14/04/2026
 /*/
-//--------------------------------------------------------------------------------
 Static Function MenuDef()
 
 	Local aRotin := {} // Variavel decalrada para passar as opções do Outras Ações, Variavel vai receber as Arreys
 
-	aAdd(aRotin, {'Pesquisar'  , 'AxPesqui'  ,0  ,1})
-	aAdd(aRotin, {'Visualizar' , 'U_PIFINC5B'  ,0  ,2})
-	aAdd(aRotin, {'Incluir'    , 'U_PIFINC5B',0  ,3})
-	aAdd(aRotin, {'Alterar'    , 'U_PIFINC5B',0  ,4})
-	aAdd(aRotin, {'Excluir'    , 'U_PIFINC5B',0  ,5})
-	aAdd(aRotin, {'Legenda'    , 'U_PIFINLE',0  ,6})
+	aAdd(aRotin, {'Pesquisar'  , 	'AxPesqui'  ,0  ,1})
+	aAdd(aRotin, {'Visualizar' , 	'U_PIFINC5B',0  ,2})
+	aAdd(aRotin, {'Incluir'    , 	'U_PIFINC5B',0  ,3})
+	aAdd(aRotin, {'Alterar'    ,	'U_PIFINC5B',0  ,4})
+	aAdd(aRotin, {'Excluir'    , 	'U_PIFINC5B',0  ,5})
+	aAdd(aRotin, {'Legenda'    , 	'U_PIFINLE'	,0  ,6})
+	aAdd(aRotin, {'Aprovar'    , 	'U_PIFINAR1',0  ,7})
+	aAdd(aRotin, {'Reprovar'   ,	'U_PIFINAR1',0  ,8})
 
 return aRotin
-//--------------------------------------------------------------------------------
 /*/{Protheus.doc} PIFINLE
 Adcionando cores com legendas
 @type       function
-@author INI Elio Matheus
+@author 		Ponto INI - Elio Matheus
 @since      14/04/2026
 /*/
-//--------------------------------------------------------------------------------
 User Function PIFINLE()
 
 	Local aLegenda := {}
@@ -58,16 +56,13 @@ User Function PIFINLE()
 	BrwLegenda("Situação da Movimentação", "Legenda", aLegenda)
 
 return
-//--------------------------------------------------------------------------------
-
 /*/{Protheus.doc} PIFINC5B
 Manutencao de movimentacoes financeiras - Modelo 3 (Header + Grid)
-@type function
-@version 1.0
-@author INI Elio Matheus
-@since 16/04/2026
+@type 		function
+@version 	2410
+@author 	Ponto INI - Elio Matheus
+@since 		16/04/2026
 /*/
-//--------------------------------------------------------------------------------
 User Function PIFINC5B(cAlias,nReg,nOpc)
 
 	Local aButtons	:= {}
@@ -119,15 +114,13 @@ User Function PIFINC5B(cAlias,nReg,nOpc)
 	EndIf
 	Activate MsDialog oDlg Centered On Init (EnchoiceBar(oDlg,{|| IIF(Obrigatorio(aGets,aTela) .AND. oGetDad:TudoOk(),(PIFINA5(),oDlg:End()),.F.)},{|| RollBackSx8(),oDlg:End()},,aButtons))
 Return(Nil)
-//--------------------------------------------------------------------------------
 /*/{Protheus.doc} FCarreAcols
 Função para carregar o acols
-@type function
+@type 		function
 @version  1.0
-@author INI Elio Matheus
-@since 16/04/2026
+@author 	Ponto INI - Elio Matheus
+@since 		16/04/2026
 /*/
-//--------------------------------------------------------------------------------
 Static Function FCarreAcols(cTab, aCabec, aItens)
 
 	//Local cCampCab	:= 'Z4_CODDES|Z4_CPFBEN|Z4_NOMBEN|Z4_CODCORR|Z4_NOMCORR|Z4_DATA|Z4_STATUS'
@@ -155,15 +148,13 @@ Static Function FCarreAcols(cTab, aCabec, aItens)
 		EndIf
 	Next nXo
 Return(Nil)
-//--------------------------------------------------------------------------------
 /*/{Protheus.doc} FCarreGrid
 Função para carregar Grid
-@type function
+@type 		function
 @version  1.0
-@author Ini Elio Matheus
-@since 16/04/2026
+@author 	Ponto INI - Elio Matheus
+@since 		16/04/2026
 /*/
-//--------------------------------------------------------------------------------
 Static Function FCarreGrid(cAlias,nReg,nOpc)
 
 	Local aAreaAll	:= {SZ5->(GetArea()),GetArea()}
@@ -199,15 +190,13 @@ Static Function FCarreGrid(cAlias,nReg,nOpc)
 	AEVal(aAreaAll,{|x|RestArea(x)})
 
 Return(Nil)
-//--------------------------------------------------------------------------------
 /*/{Protheus.doc} PIFINA5
 Função para fazer Inclusão, Alteração e Exclusao de Registros
-@type function
-@version 12.0
-@author Ponto Ini Elio Matheus
-@since 15/04/2026
+@type 		function
+@version 	12.0
+@author 	Ponto Ini Elio Matheus
+@since 		15/04/2026
 /*/
-//--------------------------------------------------------------------------------
 Static Function PIFINA5()
 	Local lRet 				:= .T.
 	Local nPosItem 		:= aScan(aItens, {|x| AllTrim(x[2]) == "Z5_ITEM"})
@@ -464,4 +453,30 @@ User Function PIFINTOK()
 	ELse
 		lRet := .T.
 	Endif
+Return lRet
+
+User Function PIFINAR1(cAlias, nReg, nOpc)
+	Local lRet := .F.
+	Local nTotal := 0
+
+	SZ4->(DbSetOrder(1))
+	SZ5->(DbSetOrder(1))
+	If nOpc == 8
+		If SZ4->(DbSeek(xFilial("SZ4") + SZ4->Z4_CODDES))
+			If FWAlertYesNo("Deseja Reprovar essa despesa?", "Reprovar despesa " + SZ4->Z4_CODDES)
+				RecLock("SZ4", .F.) // Reclock de Alteração
+				SZ4->Z4_STATUS := "R"
+				SZ4->(MsUnlock())
+				lRet := .T.
+			EndIf
+		EndIf
+	ElseIf nOpc == 7
+		If SZ5->(dbSeek(xFilial("SZ5") + SZ4->Z4_CODDES))
+			While ! SZ5->(Eof()) .And. SZ5->Z5_FILIAL == xFilial("SZ5") .And. SZ5->Z5_CODDES == SZ4->Z4_CODDES
+				nTotal += SZ5->Z5_VALOR
+				SZ5->(dbSkip())
+			EndDo
+			Alert("o Valor total é " + TransForm(nTotal, "@E 999,999,999.99"))
+		EndIf
+	EndIf
 Return lRet
